@@ -72,7 +72,7 @@ set CMD_LINE_ARGS=%$
 set CLASSPATH=%APP_HOME%\lib\gs-gradle-0.1.0.jar;%APP_HOME%\lib\joda-time-2.2.jar
 
 @rem Execute javapacman
-"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %JAVAPACMAN_OPTS%  -classpath "%CLASSPATH%" Pacman %CMD_LINE_ARGS%
+"%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %JAVAPACMAN_OPTS%  -classpath "%CLASSPATH%" javapacman.Pacman %CMD_LINE_ARGS%
 
 :end
 @rem End local scope for the variables with windows NT shell
