@@ -1,6 +1,15 @@
-apply plugin: "application"
+plugins {
+  id "java"
+  id "org.sonarqube" version "3.0"
+}
 
-mainClassName = "Pacman"
+sonarqube {
+  properties {
+    property "sonar.projectKey", "liubovmuzyka_javapacman"
+    property "sonar.organization", "liubovmuzyka"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
+}
 
 repositories {
     mavenCentral()
