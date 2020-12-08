@@ -18,6 +18,10 @@ repositories {
     mavenCentral()
 }
 
+task installWrapper(type: Wrapper) {
+    gradleVersion = '6.7'
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
