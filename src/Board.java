@@ -12,9 +12,9 @@ import java.lang.Math;
    creates the gui and captures mouse and keyboard input, as well as controls the game states*/
 public class Board extends JPanel implements MouseListener, KeyListener {
 
-    final ThreadLocal<Image> titleScreenImage = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/titleScreen.jpg"));
-    final ThreadLocal<Image> gameOverImage = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/gameOver.jpg"));
-    final ThreadLocal<Image> winScreenImage = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/winScreen.jpg"));
+    Image titleScreenImage =  Toolkit.getDefaultToolkit().getImage("img/titleScreen.jpg");
+    Image gameOverImage = Toolkit.getDefaultToolkit().getImage("img/gameOver.jpg");
+    Image winScreenImage =  Toolkit.getDefaultToolkit().getImage("img/winScreen.jpg");
 
     /* Initialize the player and ghosts */
     Player player = new Player(200, 300);
@@ -29,9 +29,6 @@ public class Board extends JPanel implements MouseListener, KeyListener {
     /* Dying is used to count frames in the dying animation.  If it's non-zero,
        pacman is in the process of dying */
     int dying = 0;
-
-    /* Score information */
-    int currScore;
 
     int numLives = 2;
 
@@ -75,7 +72,6 @@ public class Board extends JPanel implements MouseListener, KeyListener {
     public Board() {
         score = new Score();
         sounds = new GameSounds();
-        currScore = 0;
         stopped = false;
         max = 400;
         gridSize = 20;
@@ -136,7 +132,6 @@ public class Board extends JPanel implements MouseListener, KeyListener {
         pellets[10][8] = false;
 
     }
-
 
     /* Function is called during drawing of the map.
        Whenever the a portion of the map is covered up with a barrier,
@@ -302,7 +297,9 @@ public class Board extends JPanel implements MouseListener, KeyListener {
     }
 
     /* This is the main function that draws one entire frame of the game */
+    @Override
     public void paint(Graphics g) {
+
     /* If we're playing the dying animation, don't update the entire screen.
        Just kill the pacman*/
         if (dying > 0) {
@@ -310,7 +307,7 @@ public class Board extends JPanel implements MouseListener, KeyListener {
             sounds.nomNomStop();
 
             /* Draw the pacman */
-            g.drawImage(player.pacmanImage.get(), player.x, player.y, Color.BLACK, null);
+            g.drawImage(player.pacmanImage, player.x, player.y, Color.BLACK, null);
             g.setColor(Color.BLACK);
 
             /* Kill the pacman */
@@ -323,7 +320,7 @@ public class Board extends JPanel implements MouseListener, KeyListener {
             else if (dying == 1) {
                 g.fillRect(player.x, player.y, 20, 20);
             }
-     
+
       /* Take .1 seconds on each frame of death, and then take 2 seconds
          for the final frame to allow for the sound effect to end */
             long currTime = System.currentTimeMillis();
@@ -344,8 +341,8 @@ public class Board extends JPanel implements MouseListener, KeyListener {
                             numLives = 2;
                         else {
                             /* Game over for player.  If relevant, update high score.  Set gameOver flag*/
-                            if (currScore > score.highScore) {
-                                score.updateScore(currScore);
+                            if (score.currScore > score.highScore) {
+                                score.updateScore(score.currScore);
                             }
                             overScreen = true;
                         }
@@ -354,12 +351,11 @@ public class Board extends JPanel implements MouseListener, KeyListener {
             }
             return;
         }
-
         /* If this is the title screen, draw the title screen and return */
         if (titleScreen) {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, 600, 600);
-            g.drawImage(titleScreenImage.get(), 0, 0, Color.BLACK, null);
+            g.drawImage(titleScreenImage, 0, 0, Color.BLACK, null);
 
             /* Stop any pacman eating sounds */
             sounds.nomNomStop();
@@ -371,7 +367,7 @@ public class Board extends JPanel implements MouseListener, KeyListener {
         else if (winScreen) {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, 600, 600);
-            g.drawImage(winScreenImage.get(), 0, 0, Color.BLACK, null);
+            g.drawImage(winScreenImage, 0, 0, Color.BLACK, null);
             newGame = 1;
             /* Stop any pacman eating sounds */
             sounds.nomNomStop();
@@ -382,25 +378,16 @@ public class Board extends JPanel implements MouseListener, KeyListener {
         else if (overScreen) {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, 600, 600);
-            g.drawImage(gameOverImage.get(), 0, 0, Color.BLACK, null);
+            g.drawImage(gameOverImage, 0, 0, Color.BLACK, null);
             newGame = 1;
             /* Stop any pacman eating sounds */
             sounds.nomNomStop();
             return;
         }
 
+
         /* If need to update the high scores, redraw the top menu bar */
-        if (score.clearHighScores) {
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, 600, 18);
-            g.setColor(Color.YELLOW);
-            g.setFont(font);
-            score.clearHighScores = false;
-            if (demo)
-                g.drawString("DEMO MODE PRESS ANY KEY TO START A GAME\t High Score: " + score.highScore, 20, 10);
-            else
-                g.drawString("Score: " + (currScore) + "\t High Score: " + score.highScore, 20, 10);
-        }
+        score.updateScore(g, demo);
 
         /* oops is set to true when pacman has lost a life */
         boolean oops = false;
@@ -413,7 +400,7 @@ public class Board extends JPanel implements MouseListener, KeyListener {
             ghost2 = new Ghost(200, 180);
             ghost3 = new Ghost(220, 180);
             ghost4 = new Ghost(220, 180);
-            currScore = 0;
+            score.currScore = 0;
             drawBoard(g);
             drawPellets(g);
             drawLives(g);
@@ -432,7 +419,7 @@ public class Board extends JPanel implements MouseListener, KeyListener {
             if (demo)
                 g.drawString("DEMO MODE PRESS ANY KEY TO START A GAME\t High Score: " + score.highScore, 20, 10);
             else
-                g.drawString("Score: " + (currScore) + "\t High Score: " + score.highScore, 20, 10);
+                g.drawString("Score: " + (score.currScore) + "\t High Score: " + score.highScore, 20, 10);
             newGame++;
         }
         /* Second frame of new game */
@@ -524,7 +511,7 @@ public class Board extends JPanel implements MouseListener, KeyListener {
             pellets[player.pelletX][player.pelletY] = false;
 
             /* Increment the score */
-            currScore += 50;
+            score.currScore += 50;
 
             /* Update the screen to reflect the new score */
             g.setColor(Color.BLACK);
@@ -534,14 +521,14 @@ public class Board extends JPanel implements MouseListener, KeyListener {
             if (demo)
                 g.drawString("DEMO MODE PRESS ANY KEY TO START A GAME\t High Score: " + score.highScore, 20, 10);
             else
-                g.drawString("Score: " + (currScore) + "\t High Score: " + score.highScore, 20, 10);
+                g.drawString("Score: " + (score.currScore) + "\t High Score: " + score.highScore, 20, 10);
 
             /* If this was the last pellet */
             if (player.pelletsEaten == 173) {
                 /*Demo mode can't get a high score */
                 if (!demo) {
-                    if (currScore > score.highScore) {
-                        score.updateScore(currScore);
+                    if (score.currScore > score.highScore) {
+                        score.updateScore(score.currScore);
                     }
                     winScreen = true;
                 } else {
@@ -572,17 +559,17 @@ public class Board extends JPanel implements MouseListener, KeyListener {
         /*Draw the ghosts */
         if (ghost1.frameCount < 5) {
             /* Draw first frame of ghosts */
-            g.drawImage(ghost1.ghost10.get(), ghost1.x, ghost1.y, Color.BLACK, null);
-            g.drawImage(ghost2.ghost20.get(), ghost2.x, ghost2.y, Color.BLACK, null);
-            g.drawImage(ghost3.ghost30.get(), ghost3.x, ghost3.y, Color.BLACK, null);
-            g.drawImage(ghost4.ghost40.get(), ghost4.x, ghost4.y, Color.BLACK, null);
+            g.drawImage(ghost1.ghost10, ghost1.x, ghost1.y, Color.BLACK, null);
+            g.drawImage(ghost2.ghost20, ghost2.x, ghost2.y, Color.BLACK, null);
+            g.drawImage(ghost3.ghost30, ghost3.x, ghost3.y, Color.BLACK, null);
+            g.drawImage(ghost4.ghost40, ghost4.x, ghost4.y, Color.BLACK, null);
             ghost1.frameCount++;
         } else {
             /* Draw second frame of ghosts */
-            g.drawImage(ghost1.ghost11.get(), ghost1.x, ghost1.y, Color.BLACK, null);
-            g.drawImage(ghost2.ghost21.get(), ghost2.x, ghost2.y, Color.BLACK, null);
-            g.drawImage(ghost3.ghost31.get(), ghost3.x, ghost3.y, Color.BLACK, null);
-            g.drawImage(ghost4.ghost41.get(), ghost4.x, ghost4.y, Color.BLACK, null);
+            g.drawImage(ghost1.ghost11, ghost1.x, ghost1.y, Color.BLACK, null);
+            g.drawImage(ghost2.ghost21, ghost2.x, ghost2.y, Color.BLACK, null);
+            g.drawImage(ghost3.ghost31, ghost3.x, ghost3.y, Color.BLACK, null);
+            g.drawImage(ghost4.ghost41, ghost4.x, ghost4.y, Color.BLACK, null);
             if (ghost1.frameCount >= 10)
                 ghost1.frameCount = 0;
             else
@@ -592,7 +579,7 @@ public class Board extends JPanel implements MouseListener, KeyListener {
         /* Draw the pacman */
         if (player.frameCount < 5) {
             /* Draw mouth closed */
-            g.drawImage(player.pacmanImage.get(), player.x, player.y, Color.BLACK, null);
+            g.drawImage(player.pacmanImage, player.x, player.y, Color.BLACK, null);
         } else {
             /* Draw mouth open in appropriate direction */
             if (player.frameCount >= 10)
@@ -600,16 +587,16 @@ public class Board extends JPanel implements MouseListener, KeyListener {
 
             switch (player.currDirection) {
                 case 'L':
-                    g.drawImage(player.pacmanLeftImage.get(), player.x, player.y, Color.BLACK, null);
+                    g.drawImage(player.pacmanLeftImage, player.x, player.y, Color.BLACK, null);
                     break;
                 case 'R':
-                    g.drawImage(player.pacmanRightImage.get(), player.x, player.y, Color.BLACK, null);
+                    g.drawImage(player.pacmanRightImage, player.x, player.y, Color.BLACK, null);
                     break;
                 case 'U':
-                    g.drawImage(player.pacmanUpImage.get(), player.x, player.y, Color.BLACK, null);
+                    g.drawImage(player.pacmanUpImage, player.x, player.y, Color.BLACK, null);
                     break;
                 case 'D':
-                    g.drawImage(player.pacmanDownImage.get(), player.x, player.y, Color.BLACK, null);
+                    g.drawImage(player.pacmanDownImage, player.x, player.y, Color.BLACK, null);
                     break;
             }
         }
@@ -623,7 +610,6 @@ public class Board extends JPanel implements MouseListener, KeyListener {
       /* This repaint function repaints only the parts of the screen that may have changed.
      Namely the area around every player ghost and the menu bars
       */
-
     public void repaintChangedPartsOfScreen() {
         if (player.teleport) {
             repaint(player.lastX - 20, player.lastY - 20, 80, 80);
@@ -825,28 +811,34 @@ public class Board extends JPanel implements MouseListener, KeyListener {
 
     @Override
     public void mouseReleased(MouseEvent mouseEvent) {
+        // Do nothing
     }
 
     @Override
     public void mouseEntered(MouseEvent mouseEvent) {
+        // Do nothing
     }
 
     @Override
     public void mouseExited(MouseEvent mouseEvent) {
+        // Do nothing
     }
 
     @Override
     public void keyReleased(KeyEvent keyEvent) {
+        // Do nothing
 
     }
 
     @Override
     public void mouseClicked(MouseEvent mouseEvent) {
+        // Do nothing
 
     }
 
     @Override
     public void keyTyped(KeyEvent keyEvent) {
+        // Do nothing
 
     }
 

@@ -5,14 +5,14 @@ import java.awt.*;
 /* Ghost class controls the ghost. */
 class Ghost extends Mover {
 
-    final ThreadLocal<Image> ghost10 = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/ghost10.jpg"));
-    final ThreadLocal<Image> ghost20 = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/ghost20.jpg"));
-    final ThreadLocal<Image> ghost30 = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/ghost30.jpg"));
-    final ThreadLocal<Image> ghost40 = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/ghost40.jpg"));
-    final ThreadLocal<Image> ghost11 = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/ghost11.jpg"));
-    final ThreadLocal<Image> ghost21 = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/ghost21.jpg"));
-    final ThreadLocal<Image> ghost31 = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/ghost31.jpg"));
-    final ThreadLocal<Image> ghost41 = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/ghost41.jpg"));
+    Image ghost10 = Toolkit.getDefaultToolkit().getImage("img/ghost10.jpg");
+    Image ghost20 = Toolkit.getDefaultToolkit().getImage("img/ghost20.jpg");
+    Image ghost30 = Toolkit.getDefaultToolkit().getImage("img/ghost30.jpg");
+    Image ghost40 = Toolkit.getDefaultToolkit().getImage("img/ghost40.jpg");
+    Image ghost11 = Toolkit.getDefaultToolkit().getImage("img/ghost11.jpg");
+    Image ghost21 = Toolkit.getDefaultToolkit().getImage("img/ghost21.jpg");
+    Image ghost31 = Toolkit.getDefaultToolkit().getImage("img/ghost31.jpg");
+    Image ghost41 = Toolkit.getDefaultToolkit().getImage("img/ghost41.jpg");
     /* Direction ghost is heading */
     char direction;
 

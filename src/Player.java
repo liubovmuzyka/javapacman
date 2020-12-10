@@ -4,11 +4,11 @@ import java.awt.*;
 
 /* This is the pacman object */
 class Player extends Mover {
-    final ThreadLocal<Image> pacmanImage = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/pacman.jpg"));
-    final ThreadLocal<Image> pacmanUpImage = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/pacmanup.jpg"));
-    final ThreadLocal<Image> pacmanDownImage = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/pacmandown.jpg"));
-    final ThreadLocal<Image> pacmanLeftImage = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/pacmanleft.jpg"));
-    final ThreadLocal<Image> pacmanRightImage = ThreadLocal.withInitial(() -> Toolkit.getDefaultToolkit().getImage("img/pacmanright.jpg"));
+    Image pacmanImage = Toolkit.getDefaultToolkit().getImage("img/pacman.jpg");
+    Image pacmanUpImage = Toolkit.getDefaultToolkit().getImage("img/pacmanup.jpg");
+    Image pacmanDownImage = Toolkit.getDefaultToolkit().getImage("img/pacmandown.jpg");
+    Image pacmanLeftImage = Toolkit.getDefaultToolkit().getImage("img/pacmanleft.jpg");
+    Image pacmanRightImage = Toolkit.getDefaultToolkit().getImage("img/pacmanright.jpg");
     /* Direction is used in demoMode, currDirection and desiredDirection are used in non demoMode*/
     char direction;
     char currDirection;
